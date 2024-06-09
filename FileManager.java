@@ -79,4 +79,15 @@ public class FileManager
             System.out.println("Successfully appended to file.");
         } catch (IOException e) { e.printStackTrace(); System.out.println("Error");}
     }
+    public static String readFirstLine(String filename){
+        try {
+            File myObj = new File(filename);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                return myReader.nextLine();
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) { e.printStackTrace(); }
+        return "0";
+    }
 }

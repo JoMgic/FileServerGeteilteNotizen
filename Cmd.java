@@ -3,19 +3,17 @@ import java.lang.reflect.Method;
 public class Cmd
 {
     private String cmd = "<CMD><name>addnotiz</name><value>helloworld</value>";
+    public final static String bsp = "<CMD><name>addNotiz</name><arg0>hallo</arg0><arg1>test</arg1>";
     private String name;
     private String value;
     private String param[];
-    /**
-     * Konstruktor für Objekte der Klasse cmd
-     */
     public Cmd(String command){
-        
+        cmd = command;
     }
     public Cmd(){
-        
+        cmd = "<CMD><name>addNotiz</name><value>helloworld</value><arg0>hallo</arg0><arg1>test</arg1>";
     }
-    public String htmlEncoder(String param, String s){
+    public static String htmlEncoder(String param, String s){
         if(s == null || param == null){
             return "";
         }
@@ -27,17 +25,21 @@ public class Cmd
         return value;
     }
     public void exec(){
-        cmd = "<CMD><name>addNotiz</name><value>helloworld</value>";
-        name = htmlEncoder("name", cmd);
-        value = htmlEncoder("value", cmd);
         
-        param = new String[]{"Hpe", "World"};
+        name = htmlEncoder("name", cmd);
+        //value = htmlEncoder("value", cmd);
+        
+        param = htmlEncoderParameter(cmd);
+        //param[0] = htmlEncoder("arg0", cmd);
+        //param[1] = htmlEncoder("arg1", cmd);
+        //System.out.println(param.toString());
         try {
             Method methode = Server.class.getMethod(name, String[].class);
             methode.invoke(new Server(), (Object)param);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("EXECUTION");
     }
     public static String addNotiz(String value){
         return "<CMD><addNotiz><value="+value+">";
@@ -45,5 +47,22 @@ public class Cmd
     }
     public static String readFile(){
         return "<CMD><name>readNotiz</name><value></value>";
+    }
+    public static String[] htmlEncoderParameter(String s){
+        if(s == null){
+            return new String[]{null};
+        }
+        String[] arr;
+        int arrSize = 0;
+        for(int i = 0; s.contains("</arg"+i+">"); i++){
+            arrSize = i+1;
+        }
+        System.out.println("ArraySize" + arrSize);
+        arr = new String[arrSize];
+        for(int i = 0; i < arrSize; i++){
+            System.out.println("start encoding " + i);
+            arr[i] = htmlEncoder("arg"+i, s);
+        }
+        return arr;
     }
 }
