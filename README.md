@@ -1,1 +1,3 @@
 # FileServerGeteilteNotizen
+
+Kommunikation über Files
