@@ -7,11 +7,14 @@ public class Cmd
     private String name;
     private String value;
     private String param[];
+    private Server serv;
     public Cmd(String command){
         cmd = command;
+        serv = new Server();
     }
     public Cmd(){
         cmd = "<CMD><name>addNotiz</name><value>helloworld</value><arg0>hallo</arg0><arg1>test</arg1>";
+        serv = new Server();
     }
     public static String htmlEncoder(String param, String s){
         if(s == null || param == null){
@@ -24,6 +27,9 @@ public class Cmd
         System.out.println(param + ": " + value);
         return value;
     }
+    public void newCommand(String s){
+        cmd = s;
+    }
     public void exec(){
         
         name = htmlEncoder("name", cmd);
@@ -35,7 +41,7 @@ public class Cmd
         //System.out.println(param.toString());
         try {
             Method methode = Server.class.getMethod(name, String[].class);
-            methode.invoke(new Server(), (Object)param);
+            methode.invoke(serv, (Object)param);
         } catch (Exception e) {
             e.printStackTrace();
         }

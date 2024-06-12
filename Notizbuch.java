@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.io.File;
 
 /**
  * @author Johannes
@@ -10,27 +11,32 @@ public class Notizbuch
     private String filename;
     public Notizbuch()
     {
-        filename = "./Notebook.nb";
+        filename = "./dat/Notebook.nb";
+        //notizen = new ArrayList<>();
+        //FileManager.createFile(filename);
+        fileLaden();
+        //notizen = FileManager.readFile(filename);
+    }
+    public Notizbuch(ArrayList<String> arrlist){
+        filename = "./dat/Notebook.nb";
+        FileManager.createFile(filename);
+        notizen = arrlist;
+    }
+    public Notizbuch(File f)
+    {
+        filename = f.toString();
         //notizen = new ArrayList<>();
         FileManager.createFile(filename);
         notizen = FileManager.readFile(filename);
     }
-    public Notizbuch(ArrayList<String> arrlist){
-        filename = "./Notebook.nb";
-        FileManager.createFile(filename);
-        notizen = arrlist;
-    }
-    public Notizbuch(String s)
-    {
-        notizen = new ArrayList<>();
-        notizen.add(s);
-        fileSync();
-    }
     public void speichereNotiz(String s){
         notizen.add(s);
         System.out.println("Notiz: " + s + " wurde gespeichert.");
-        fileSync();
+        fileSpeichern();
         return;
+    }
+    public void speichereNotiz(int i, String value){
+        notizen.add(i, value);
     }
     public int anzahlNotizen(){
         System.out.println("Anzahl Notizen: " + notizen.size());
@@ -150,6 +156,7 @@ public class Notizbuch
         FileManager.createFile(filename);
         FileManager.writeFile(filename, notizen);
         System.out.println("Notizbuch gespeichert");*/
+        FileManager.overrideFile(filename, notizen);
     }
     
     public void fileSync(){
@@ -163,10 +170,19 @@ public class Notizbuch
         }
         notizen = savedNotebook.getList();
         fileSpeichern();*/
+        
     }
     
     
-    
+    public void fileLaden() {
+        if (new File(filename).exists()) {
+            notizen = FileManager.readFile(filename);
+            System.out.println("File geladen: " + notizen.toString());
+        } else {
+            FileManager.createFile(filename);
+            fileLaden();
+        }
+    }
     public void alleNotizenAusgebenMitIterator(){
         Iterator<String> iterator;                      // Iterator<String> iterator = notizen.iterator();
         iterator = notizen.iterator();
@@ -176,11 +192,13 @@ public class Notizbuch
         }
         System.out.println("");
     }
-    public String getNotiz(int i){
-        alleNotizenAusgeben();
-        if(i < notizen.size()-1)
-        return notizen.get(i);
+     public String getNotiz(int i) {
+        if (i < notizen.size())
+            return notizen.get(i);
         System.out.println("Notiz außerhalb des Bounds");
         return null;
+    }
+     public int getSize() {
+        return notizen.size();
     }
 }
